@@ -15,9 +15,7 @@
 ## 如何執行
 
 1.  開啟終端機 (Terminal) 並進入專案目錄：
-    ```bash
-    cd AgingIndexWeb
-    ```
+   
 
 2.  執行應用程式：
     ```bash
@@ -33,3 +31,4 @@
 *   `Services/CsvService.cs`: 負責讀取與解析 CSV 檔案的服務。
 *   `Views/Home/Index.cshtml`: 前端頁面，包含 Chart.js 圖表與表格。
 *   `Data/主要國家老化指數.csv`: 來源資料檔。
+
