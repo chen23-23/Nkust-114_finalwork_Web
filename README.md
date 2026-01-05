@@ -22,7 +22,7 @@
     dotnet run
     ```
 
-3.  開啟瀏覽器並前往終端機顯示的 URL (例如 `http://localhost:5xxx`)。
+3.  開啟瀏覽器並前往終端機顯示的 URL (例如 `http://localhost:5268`)。
 
 ## 專案結構
 
@@ -31,4 +31,5 @@
 *   `Services/CsvService.cs`: 負責讀取與解析 CSV 檔案的服務。
 *   `Views/Home/Index.cshtml`: 前端頁面，包含 Chart.js 圖表與表格。
 *   `Data/主要國家老化指數.csv`: 來源資料檔。
+
 
