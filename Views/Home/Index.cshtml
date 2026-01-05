@@ -1,0 +1,135 @@
+﻿@model List<AgingIndexWeb.Models.AgingIndexData>
+@{
+    ViewData["Title"] = "主要國家老化指數";
+    
+    // Group data for the chart
+    var countries = Model.Select(m => m.Country).Distinct().ToList();
+    var chartData = new
+    {
+        labels = Model.Where(m => m.Country == countries.FirstOrDefault())
+                      .OrderBy(m => m.Year)
+                      .Select(m => m.Year.ToString())
+                      .ToList(),
+        datasets = countries.Select(country => new
+        {
+            label = country,
+            data = Model.Where(m => m.Country == country)
+                        .OrderBy(m => m.Year)
+                        .Select(m => m.AgingIndex)
+                        .ToList(),
+            borderColor = GetColor(country),
+            fill = false
+        }).ToList()
+    };
+    
+    // Helper function to generate colors (simplified)
+    string GetColor(string country)
+    {
+        switch (country)
+        {
+            case "中華民國": return "red";
+            case "日本": return "blue";
+            case "韓國": return "green";
+            case "美國": return "purple";
+            case "英國": return "orange";
+            // Add more random colors if needed or let Chart.js handle it with plugins, but hardcoding for known set is easier
+            default: return "#" + country.GetHashCode().ToString("X6").Substring(0, 6);
+        }
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">主要國家老化指數趨勢</h1>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                趨勢圖
+            </div>
+            <div class="card-body">
+                <canvas id="agingChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                資料表
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-hover" id="dataTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>國別</th>
+                            <th>西元年</th>
+                            <th>民國年</th>
+                            <th>類別</th>
+                            <th>老化指數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Country</td>
+                                <td>@item.Year</td>
+                                <td>@item.RepublicYear</td>
+                                <td>@item.Category</td>
+                                <td>@item.AgingIndex</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Simple DataTables for sort/search if we wanted, but keeping it simple for now -->
+    
+    <script>
+        var ctx = document.getElementById('agingChart').getContext('2d');
+        var chartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartData));
+        
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '主要國家老化指數趨勢'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: '西元年'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: '老化指數'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
